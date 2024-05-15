@@ -1,4 +1,4 @@
-# Delovna-prisotnost
+# Delovna prisotnost aplikacija
 Mobilna aplikacija bo multitenant inovativna rešitev za beleženje delovnega časa zaposlenih z uporabo tehnologije QR. Primarni cilj aplikacije je zagotoviti podjetjem natančen, zanesljiv, intuitiven in enostaven način za spremljanje prisotnosti in produktivnosti svojih zaposlenih.
 
 Prisotnost na Delovnem Mestu - React Native Aplikacija
