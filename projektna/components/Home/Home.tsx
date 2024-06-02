@@ -8,6 +8,7 @@ import { styled } from "tamagui";
 import {
   H1,
   Paragraph,
+  View,
   YStack
 } from "tamagui";
 import { getUsers } from '../../services/api/api';
@@ -43,9 +44,9 @@ const Home = () => {
             {users && users.length > 0 && users[0].name && (
                   <Text>{`${users[0].name}`}</Text>            )}
             </H1>
-          <Paragraph textAlign="center" style={{ marginTop: 10 }}>
-            <Weather />
-          </Paragraph>
+            <View style={{ marginTop: 10 }}>
+                <Weather />
+              </View>
         </YStack>
       </MyStack>
     </MySafeAreaView>

@@ -1,9 +1,24 @@
 import { getDocs, collection, addDoc, doc, setDoc } from '@firebase/firestore';
 import { app, firestore } from '../api/firebaseConfig';
 import { User } from '../../modules/interfaces/user';
+import axios from "axios";
 
-export const getUsers = async (): Promise<User[]> => {
+const api = axios.create({
+   baseURL: process.env.REACT_APP_BASE_URL,
+   timeout: 30000,
+   headers: {
+       "Content-Type": "application/json",
+       Accept: "application/json",
+   },
+});
+
+export const getUsers = async ()/* : Promise<User[]> */ => {
   try {
+
+    /* api.get('/users').then((response) => {
+      console.log(response.data);
+    }); */
+
     const querySnapshot = await getDocs(collection(firestore, 'users'));
     const users = querySnapshot.docs.map((doc): User => {
       //id: doc.id,     to ne rabi bit ker imamo ze pod uid
@@ -16,7 +31,6 @@ export const getUsers = async (): Promise<User[]> => {
       return user;
     });
 
-    //console.log('Data from Firestore:', users);
     return users;
   } catch (error) {
     console.error('Error fetching data from Firestore:', error);

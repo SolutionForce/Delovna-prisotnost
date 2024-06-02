@@ -35,22 +35,15 @@ const Weather = () => {
   };
 
     
-    return (
-      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+  return (
+    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
       {weather && (
         <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-          <Text>
-          <H6>{`Temperature: ${kelvinToCelsius(weather.current.temp).toFixed(0)} °C`}</H6>
-          {/* zakomentirano ker ni časa in zgleda slabo! */}
-          {/* <Image
-            source={{ uri: getWeatherIconSource() }}
-            style={{ width: 50, height: 50 }}
-          /> */}
-          </Text>
+          <Text>{`Temperature: ${kelvinToCelsius(weather.current.temp).toFixed(0)} °C`}</Text>
         </View>
       )}
     </View>
-    );
+  );
     
 
 
