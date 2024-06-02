@@ -12,16 +12,10 @@ const api = axios.create({
    },
 });
 
-export const getUsers = async ()/* : Promise<User[]> */ => {
+export const getUsers = async (): Promise<User[]> => {
   try {
-
-    /* api.get('/users').then((response) => {
-      console.log(response.data);
-    }); */
-
     const querySnapshot = await getDocs(collection(firestore, 'users'));
     const users = querySnapshot.docs.map((doc): User => {
-      //id: doc.id,     to ne rabi bit ker imamo ze pod uid
       const user: User = {
         uid: doc.data().uid,
         name: doc.data().name,
