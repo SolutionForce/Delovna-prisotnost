@@ -3,39 +3,31 @@ import { app, firestore } from '../api/firebaseConfig';
 import { User } from '../../modules/interfaces/user';
 import axios from "axios";
 
-const api = axios.create({
+const api = axios.create({ //to be used soon
    baseURL: process.env.REACT_APP_BASE_URL,
    timeout: 30000,
    headers: {
        "Content-Type": "application/json",
-       Accept: "application/json",
+       Accept: "application/json", 
    },
 });
 
 export const getUsers = async (): Promise<User[]> => {
   try {
-    const querySnapshot = await getDocs(collection(firestore, 'users'));
-    const users = querySnapshot.docs.map((doc): User => {
-      const user: User = {
-        uid: doc.data().uid,
-        name: doc.data().name,
-        surname: doc.data().surname,
-        attendance: doc.data().attendance
-      };
-      return user;
-    });
+    const response = await axios.get('http://localhost:5001/rvir-1e34e/us-central1/api/users');
+    return response.data;
 
-    return users;
   } catch (error) {
-    console.error('Error fetching data from Firestore:', error);
+    console.error('Error fetching data from API:', error);
     return [];
   }
-};
+  
+}
+
 
 export const addUser = async (user: User) => {
   try {
-    const docRef = await addDoc(collection(firestore, "users"), user);
-    //console.log("Document written with ID: ", docRef.id);
+    axios.post('http://localhost:5001/rvir-1e34e/us-central1/api/users', user)//to be changed
   } catch (error) {
     console.error('Error adding document: ', error);
   }
