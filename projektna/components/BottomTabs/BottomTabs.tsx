@@ -5,12 +5,13 @@ import ScanQRCode from '../ScanQRCode/ScanQRCode';
 import Tabela from '../Tabela/Tabela';
 import { AntDesign } from '@expo/vector-icons';
 import Colors from '../Colors/Colors';
-
+import React from 'react';
 
 /* Tukaj importaj  */
 const Tab = createBottomTabNavigator();
 
-function BottomTabs() {
+function BottomTabs(user : any) {
+  console.log("user v bottomtabs", user);
     return (
         <Tab.Navigator
           initialRouteName="Feed"
@@ -23,9 +24,11 @@ function BottomTabs() {
             headerShown: true,
           }}
         >
+
           <Tab.Screen
             name="Home"
             component={Home}
+            initialParams={{ user: user }} // Pass user as initial param
             options={{
               tabBarLabel: 'Home',
               tabBarIcon: ({ color, size }) => (

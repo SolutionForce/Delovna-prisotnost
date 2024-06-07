@@ -4,10 +4,10 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import BottomTabs from '../components/BottomTabs/BottomTabs';
 const Stack = createNativeStackNavigator();
-const NavigationContainerComponent = () => {
+const NavigationContainerComponent = (user: any) => {
   return (
     <NavigationContainer>
-        <BottomTabs />
+        <BottomTabs user={user} />
     </NavigationContainer>
   );
 };

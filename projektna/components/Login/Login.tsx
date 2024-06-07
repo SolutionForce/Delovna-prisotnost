@@ -1,92 +1,44 @@
+import React, { useState } from 'react';
+import { View } from 'react-native';
+import { Button, Input, Text } from 'tamagui';
+import { auth } from '../../services/api/firebaseConfig';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 
-import React, {useEffect, useState} from 'react';
-import { StyleSheet, Text } from 'react-native';
-import { Theme } from 'tamagui'
-import Weather from '../Weather/Weather';
-import { SafeAreaView } from "react-native-safe-area-context";
-import { styled } from "tamagui";
-import {
-  H1,
-  Paragraph,
-  View,
-  YStack
-} from "tamagui";
-import { getUsers } from '../../services/api/api';
 const Login = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
-  //const [users, setUsers] = useState<any>(undefined);
-
-  /* useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const usersData = await getUsers();
-        setUsers(usersData);
-      } catch (error) {
-        console.error("Error fetching users:", error);
-      }
-    };
-
-    fetchData();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps */
+  const handleLogin = async () => {
+    console .log('login', email, password)
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      setError('');
+    } catch (err) {
+      setError('Failed to login. Please check your credentials.');
+    }
+  };
 
   return (
-  /*   <Theme name="blue">
-      <SafeAreaView style={styles.container}>
-      <MySafeAreaView>
-      <MyStack>
-        <YStack
-          space="$4"
-          maxWidth={600}
-          alignItems="center"
-        >
-          <H1 textAlign="center">
-            Welcome back, &nbsp;
-            this is a login page dawg
-            </H1>
-            <View style={{ marginTop: 10 }}>
-                <Weather />
-              </View>
-        </YStack>
-      </MyStack>
-    </MySafeAreaView>
-
-       </SafeAreaView>
-  </Theme> */
-  <p>  login</p>
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
+      <Text fontSize={24} fontWeight="bold" marginBottom={20}>Login</Text>
+      {error ? <Text color="red" marginBottom={10}>{error}</Text> : null}
+      <Input
+        placeholder="Email"
+        value={email}
+        onChangeText={setEmail}
+        style={{ marginBottom: 20, width: '100%' }}
+      />
+      <Input
+        placeholder="Password"
+        value={password}
+        onChangeText={setPassword}
+        secureTextEntry
+        style={{ marginBottom: 20, width: '100%' }}
+      />
+      <Button onPress={handleLogin} width="100%" backgroundColor="blue" color="white">Login</Button>
+    </View>
   );
 };
-
-
-
-export const MySafeAreaView = styled(SafeAreaView, {
-  name: "MySafeAreaView",
-  flex: 1,
-  backgroundColor: "$backgroundStrong"
-});
-export const MyStack = styled(YStack, {
-    name: "MyStack",
-    backgroundColor: "$backgroundStrong",
-    flex: 1,
-    justifyContent: "space-between",
-    padding: "$4",
-    space: "$true"
-  });
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    paddingTop: 20,
-  },
-  text: {
-    fontSize: 30,
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-});
-
-
 
 export default Login;

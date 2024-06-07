@@ -1,8 +1,7 @@
-//import '@tamagui/core/reset.css' // To ne sme biti, drugače native ne dela (je samo za web)
-import { TamaguiProvider, Theme } from 'tamagui';
+import React, { useState, useEffect } from 'react';
+import { TamaguiProvider, Theme } from 'tamagui'; // Assuming TamaguiProvider is the same as AuthProvider
 import config from './tamagui.config';
 import Inicialization from './components/Inicialization/Inicialization';
-import React, { useState, useEffect } from 'react';
 import NavigationContainerComponent from './navigation/Navigation';
 import { LogBox, View } from 'react-native';
 import Login from './components/Login/Login';
@@ -19,6 +18,7 @@ export default function App() {
     const subscriber = onAuthStateChanged(auth, (user) => {
       setUser(user);
       if (initializing) setInitializing(false);
+      console.log(user, 'user')
     });
 
     return () => subscriber(); // Unsubscribe on unmount
@@ -28,9 +28,13 @@ export default function App() {
 
   if (!user) {
     return (
-      <View>
-        <Login />
-      </View>
+      <TamaguiProvider config={config}>
+          <Theme name="light">
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+              <Login />
+            </View>
+          </Theme>
+      </TamaguiProvider>
     );
   }
 
@@ -38,7 +42,7 @@ export default function App() {
     <TamaguiProvider config={config}>
       <Inicialization />
       <Theme name="blue">
-        <NavigationContainerComponent />
+        <NavigationContainerComponent user={user.email}/>
       </Theme>
     </TamaguiProvider>
   );
