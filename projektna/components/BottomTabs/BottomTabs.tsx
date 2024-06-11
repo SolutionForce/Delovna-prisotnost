@@ -10,8 +10,8 @@ import React from 'react';
 /* Tukaj importaj  */
 const Tab = createBottomTabNavigator();
 
-function BottomTabs(user : any) {
-  console.log("user v bottomtabs", user);
+
+const BottomTabs = ({ uid }: { uid: string }) => {
     return (
         <Tab.Navigator
           initialRouteName="Feed"
@@ -28,7 +28,7 @@ function BottomTabs(user : any) {
           <Tab.Screen
             name="Home"
             component={Home}
-            initialParams={{ user: user }} // Pass user as initial param
+            initialParams={{ uid }}
             options={{
               tabBarLabel: 'Home',
               tabBarIcon: ({ color, size }) => (

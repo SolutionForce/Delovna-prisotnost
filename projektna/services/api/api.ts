@@ -14,9 +14,21 @@ const api = axios.create({ //to be used soon
 
 export const getUsers = async (): Promise<User[]> => {
   try {
-    const response = await axios.get('http://localhost:5001/rvir-1e34e/us-central1/api/users');
+   const response = await axios.get('http://localhost:5001/rvir-1e34e/us-central1/api/users');//to be changed
     return response.data;
 
+  } catch (error) {
+    console.error('Error fetching data from API:', error);
+    return [];
+  }
+  
+}
+
+export const getUser = async (uid: String): Promise<User[]> => {
+  console.log("tle")
+  try {
+    const response = await axios.get(`http://localhost:5001/rvir-1e34e/us-central1/api/users/${uid}`);//to be changed
+    return response.data;
   } catch (error) {
     console.error('Error fetching data from API:', error);
     return [];
@@ -27,7 +39,7 @@ export const getUsers = async (): Promise<User[]> => {
 
 export const addUser = async (user: User) => {
   try {
-    axios.post('http://localhost:5001/rvir-1e34e/us-central1/api/users', user)//to be changed
+    axios.post('http://localhost:5001/rvir-1e34e/us-central1/api/users', user);//to be changed
   } catch (error) {
     console.error('Error adding document: ', error);
   }

@@ -1,76 +1,68 @@
-
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text } from 'react-native';
-import { Theme } from 'tamagui'
+import { Theme } from 'tamagui';
 import Weather from '../Weather/Weather';
-import { SafeAreaView } from "react-native-safe-area-context";
-import { styled } from "tamagui";
-import {
-  H1,
-  Paragraph,
-  View,
-  YStack
-} from "tamagui";
-import { getUsers } from '../../services/api/api';
-const Home = () => {
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { styled } from 'tamagui';
+import { H1, Paragraph, View, YStack } from 'tamagui';
+import { getUser } from '../../services/api/api';
+import Logout from '../LogOut/Logout';
+const Home = ({ route }: { route: any }) => {
+  const { uid } = route.params;
 
   const [users, setUsers] = useState<any>(undefined);
 
-  useEffect(() => { //data here is fetched from db instead of from the actual authentiacation
+  console.log('UID in home', uid);
+  useEffect(() => {
     const fetchData = async () => {
       try {
-        const usersData = await getUsers();
+        const usersData = await getUser(uid);
         setUsers(usersData);
       } catch (error) {
-        console.error("Error fetching users:", error);
+        console.error('Error fetching users:', error);
       }
     };
 
     fetchData();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [uid]);
 
   return (
     <Theme name="blue">
       <SafeAreaView style={styles.container}>
-      <MySafeAreaView>
-      <MyStack>
-        <YStack
-          space="$4"
-          maxWidth={600}
-          alignItems="center"
-        >
-          <H1 textAlign="center">
-            Welcome back, &nbsp;
-            {users && users.length > 0 && users[0].name && (
-                  <Text>{`${users[0].name}`}</Text>            )}
-            </H1>
-            <View style={{ marginTop: 10 }}>
+        <MySafeAreaView>
+          <MyStack>
+            <YStack space="$4" maxWidth={600} alignItems="center">
+              <H1 textAlign="center">
+                Welcome back, &nbsp;
+                {users && users.name && (
+                  <Text>{`${users.name}`}</Text>
+                )}
+              </H1>
+              <View style={{ marginTop: 10 }}>
                 <Weather />
+                <Logout />
               </View>
-        </YStack>
-      </MyStack>
-    </MySafeAreaView>
-
-       </SafeAreaView>
-  </Theme>
+            </YStack>
+          </MyStack>
+        </MySafeAreaView>
+      </SafeAreaView>
+    </Theme>
   );
 };
 
-
-
 export const MySafeAreaView = styled(SafeAreaView, {
-  name: "MySafeAreaView",
+  name: 'MySafeAreaView',
   flex: 1,
-  backgroundColor: "$backgroundStrong"
+  backgroundColor: '$backgroundStrong',
 });
 export const MyStack = styled(YStack, {
-    name: "MyStack",
-    backgroundColor: "$backgroundStrong",
-    flex: 1,
-    justifyContent: "space-between",
-    padding: "$4",
-    space: "$true"
-  });
+  name: 'MyStack',
+  backgroundColor: '$backgroundStrong',
+  flex: 1,
+  justifyContent: 'space-between',
+  padding: '$4',
+  space: '$true',
+});
 
 const styles = StyleSheet.create({
   container: {
@@ -86,7 +78,5 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
-
-
 
 export default Home;

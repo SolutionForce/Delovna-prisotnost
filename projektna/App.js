@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { TamaguiProvider, Theme } from 'tamagui'; // Assuming TamaguiProvider is the same as AuthProvider
+import { TamaguiProvider, Theme } from 'tamagui';
 import config from './tamagui.config';
 import Inicialization from './components/Inicialization/Inicialization';
 import NavigationContainerComponent from './navigation/Navigation';
 import { LogBox, View } from 'react-native';
 import Login from './components/Login/Login';
-import { auth } from './services/api/firebaseConfig'; // Ensure the path is correct
-import { onAuthStateChanged } from 'firebase/auth'; // Ensure this is imported from the correct Firebase package
+import { auth } from './services/api/firebaseConfig';
+import { onAuthStateChanged } from 'firebase/auth';
 
-LogBox.ignoreLogs([`fontFamily "Inter`]); // Hide warnings
+LogBox.ignoreLogs([`fontFamily "Inter`]);
 
 export default function App() {
   const [initializing, setInitializing] = useState(true);
@@ -18,10 +18,10 @@ export default function App() {
     const subscriber = onAuthStateChanged(auth, (user) => {
       setUser(user);
       if (initializing) setInitializing(false);
-      console.log(user, 'user')
+      console.log(user, 'user');
     });
 
-    return () => subscriber(); // Unsubscribe on unmount
+    return () => subscriber();
   }, [initializing]);
 
   if (initializing) return null;
@@ -29,11 +29,11 @@ export default function App() {
   if (!user) {
     return (
       <TamaguiProvider config={config}>
-          <Theme name="light">
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-              <Login />
-            </View>
-          </Theme>
+        <Theme name="light">
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <Login />
+          </View>
+        </Theme>
       </TamaguiProvider>
     );
   }
@@ -42,7 +42,7 @@ export default function App() {
     <TamaguiProvider config={config}>
       <Inicialization />
       <Theme name="blue">
-        <NavigationContainerComponent user={user.email}/>
+        <NavigationContainerComponent uid={user.uid} />
       </Theme>
     </TamaguiProvider>
   );

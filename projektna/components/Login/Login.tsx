@@ -10,7 +10,6 @@ const Login = () => {
   const [error, setError] = useState('');
 
   const handleLogin = async () => {
-    console .log('login', email, password)
     try {
       await signInWithEmailAndPassword(auth, email, password);
       setError('');
