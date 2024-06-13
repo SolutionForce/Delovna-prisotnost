@@ -47,7 +47,9 @@
     "react-native-web": "~0.19.6",
     "styled-components": "^6.1.8",
     "tamagui": "^1.82.4",
-    "typescript": "^5.1.3"
+    "typescript": "^5.1.3",
+    "@expo/config-plugins": "7.2.2",
+    "expo-constants": "~14.4.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
