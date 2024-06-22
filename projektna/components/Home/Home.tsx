@@ -12,7 +12,6 @@ const Home = ({ route }: { route: any }) => {
 
   const [users, setUsers] = useState<any>(undefined);
 
-  console.log('UID in home', uid);
   useEffect(() => {
     const fetchData = async () => {
       try {

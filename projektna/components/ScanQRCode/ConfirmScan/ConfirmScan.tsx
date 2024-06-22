@@ -1,10 +1,10 @@
 import { useAtom } from "jotai";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Button,
-  H2,
   H3,
   Separator,
+  Spinner,
   Text,
   TextArea,
   XStack,
@@ -14,30 +14,27 @@ import { usersDBAtom } from "../../../Atoms/UsersDBAtom";
 import { Attendance, Break, User } from "../../../modules/interfaces/user";
 import { Timestamp } from "@firebase/firestore";
 import { doc, setDoc } from "firebase/firestore";
-import { firestore } from "../../../services/api/firebaseConfig";
-import { StyleSheet, View } from "react-native";
+import { auth, firestore } from "../../../services/api/firebaseConfig";
+import { GestureResponderEvent, StyleSheet, View } from "react-native";
 import Colors from "../../Colors/Colors";
 import { useNavigation } from "@react-navigation/native";
+import { verifyTOTPcode } from "../../../services/api/api";
 
 interface ConfirmScanProps {
   scannedData: string;
 }
 
-const hardcodedAllowedUser = "ebRi8pmxCgQzxRuJyPCx";
-const hardcodedAllowedScannedData =
-  "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
 const buttonDisabledOpacitiy = 0.4;
 
 export default function ConfirmScan(props: ConfirmScanProps) {
   const [users] = useAtom(usersDBAtom);
   const [breakDescription, setbreakDescription] = useState<string>("");
-  const [breakDescriptionEmptyError, setbreakDescriptionEmptyError] =
-    useState<boolean>(false);
-  const [savedSuccessfullyText, setSavedSuccessfullyText] =
-    useState<string>("");
-  const currentUser: User | undefined = users.find(
-    (user) => user.uid === hardcodedAllowedUser
-  ); //! hardcoded
+  const [breakDescriptionEmptyError, setbreakDescriptionEmptyError] = useState<boolean>(false);
+  const [submissionStatusText, setSubmissionStatusText] = useState<string>("");
+  const [loadingVerify, setLoadingVerify] = useState<boolean>(true);
+  const [loadingToSave, setLoadingToSave] = useState<boolean>(false);
+  const [attendanceVerified, setAttendanceVerified] = useState<boolean>(false);
+  const currentUser: User | undefined = users.find((user) => user.uid === (auth.currentUser?.uid || ''));
   const timeNow: Timestamp = Timestamp.now();
   const navigator = useNavigation();
 
@@ -48,14 +45,28 @@ export default function ConfirmScan(props: ConfirmScanProps) {
       </XStack>
     );
 
-  const savedSuccessfully = (message: string) => {
+  const submissionStatus = (message: string) => {
     setbreakDescriptionEmptyError(false);
     setbreakDescription("");
-    setSavedSuccessfullyText(message);
-    navigator.navigate("Home" as never);
+    setLoadingToSave(false);
+    setSubmissionStatusText(message);
   };
 
+  const isSavingStillAllowed = async (): Promise<boolean> => {
+    setLoadingToSave(true);
+    const isAllowed = await verifyTOTPcode(props.scannedData)
+
+    if(isAllowed)
+      return true;
+
+    submissionStatus("Error: QR code verification expired. Scan the QR code again.");
+    return false;
+  }
+
   const saveStartedWork = async () => {
+    if(!(await isSavingStillAllowed()))
+      return;
+
     const currentUserDoc = doc(firestore, "users", currentUser.uid);
     const newAttendance: Attendance = {
       timeIn: timeNow,
@@ -68,13 +79,17 @@ export default function ConfirmScan(props: ConfirmScanProps) {
         { attendance: [...currentUser.attendance, newAttendance] },
         { merge: true }
       );
-      savedSuccessfully("Successfully saved 'Started work'");
+      submissionStatus("Successfully saved 'Started work'");
     } catch (error) {
       console.warn("Could not save 'Started work'");
+      submissionStatus("Could not save 'Started work'");
     }
   };
 
   const saveEndedWork = async () => {
+    if(!(await isSavingStillAllowed()))
+      return;
+
     const currentUserDoc = doc(firestore, "users", currentUser.uid);
     const updatedAttendances = [...currentUser.attendance];
 
@@ -85,20 +100,24 @@ export default function ConfirmScan(props: ConfirmScanProps) {
         { attendance: updatedAttendances },
         { merge: true }
       );
-      savedSuccessfully("Successfully saved 'Ended work'");
+      submissionStatus("Successfully saved 'Ended work'");
     } catch (error) {
       console.warn("Could not save 'Ended work'");
+      submissionStatus("Could not save 'Ended work'");
     }
   };
 
   const saveStartedABreak = async () => {
     if (breakDescription === "") {
       setbreakDescriptionEmptyError(true);
-      setSavedSuccessfullyText("");
+      setSubmissionStatusText("");
       return;
     }
 
     setbreakDescriptionEmptyError(false);
+
+    if(!(await isSavingStillAllowed()))
+      return;
 
     const currentUserDoc = doc(firestore, "users", currentUser.uid);
     const updatedAttendances = [...currentUser.attendance];
@@ -116,13 +135,17 @@ export default function ConfirmScan(props: ConfirmScanProps) {
         { attendance: updatedAttendances },
         { merge: true }
       );
-      savedSuccessfully("Successfully saved 'Started a break'");
+      submissionStatus("Successfully saved 'Started a break'");
     } catch (error) {
       console.warn("Could not save 'Started a break'");
+      submissionStatus("Could not save 'Started a break'");
     }
   };
 
-  const saveEndedABreak = async () => {
+  const saveEndedABreak = async (e: GestureResponderEvent) => {
+    if(!(await isSavingStillAllowed()))
+      return;
+
     const currentUserDoc = doc(firestore, "users", currentUser.uid);
     const updatedAttendances = [...currentUser.attendance];
 
@@ -138,9 +161,10 @@ export default function ConfirmScan(props: ConfirmScanProps) {
         { attendance: updatedAttendances },
         { merge: true }
       );
-      savedSuccessfully("Successfully saved 'Ended a break'");
+      submissionStatus("Successfully saved 'Ended a break'");
     } catch (error) {
       console.warn("Could not save 'Ended a break'");
+      submissionStatus("Could not save 'Ended a break'");
     }
   };
 
@@ -195,18 +219,64 @@ export default function ConfirmScan(props: ConfirmScanProps) {
     return false;
   };
 
-  if (props.scannedData !== hardcodedAllowedScannedData)
-    return (
-      <XStack justifyContent="center">
-        <H3 color="red">Scanned QR code not valid</H3>
-      </XStack>
-    );
+  const verifyAttendanceCode = async () => {
+    try {
+      setAttendanceVerified(await verifyTOTPcode(props.scannedData));
+    } catch (error) {
+     console.error(error)
+     setAttendanceVerified(false);
+    }
+    
+    setLoadingVerify(false);
+  }
+
+  useEffect(() => {
+    verifyAttendanceCode();
+  }, [auth.currentUser, props.scannedData]);
 
   const disableStartWork = !isStartWorkAllowed();
   const disableEndWork = !isEndWorkAllowed();
   const disableStartBreak = !isStartABreakAllowed();
   const disableEndBreak = !isEndABreakAllowed();
   const date = timeNow.toDate().toLocaleString("sl-SI").split(",");
+
+  if(loadingVerify)
+    return (
+      <XStack justifyContent="center">
+        <H3><Spinner color="black" /> Verifying</H3>
+      </XStack>
+    );
+
+  if(!attendanceVerified)
+    return (
+      <XStack justifyContent="center">
+        <H3 color="red">Scanned QR code not valid</H3>
+      </XStack>
+    );
+
+  if(loadingToSave)
+    return (
+      <XStack justifyContent="center">
+        <H3><Spinner color="black" /> Saving</H3>
+      </XStack>
+    );
+
+  if(submissionStatusText !== "")
+    return (
+      <YStack>
+        <XStack justifyContent="center" marginTop="$5">
+          <H3>{submissionStatusText}</H3>
+        </XStack>
+        <Button
+          style={styles.gumb}
+          theme="active"
+         onPress={() => {navigator.navigate("Home" as never)}}
+        >
+          <Text>Home</Text>
+        </Button>
+      </YStack>
+    );
+
   return (
     <YStack>
       <View style={styles.predgovor}>
@@ -226,7 +296,7 @@ export default function ConfirmScan(props: ConfirmScanProps) {
 
       <XStack marginTop="$8" justifyContent="center">
         <Text fontSize="$7" color="green">
-          {savedSuccessfullyText}
+          {submissionStatusText}
         </Text>
       </XStack>
 

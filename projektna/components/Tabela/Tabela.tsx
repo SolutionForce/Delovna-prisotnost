@@ -7,8 +7,7 @@ import IzpisPodatkov from "./IzpisPodatkov";
 import { usersDBAtom } from '../../Atoms/UsersDBAtom';
 import { useAtom } from 'jotai';
 import { User } from "../../modules/interfaces/user";
-
-const hardcodedAllowedUser = "ebRi8pmxCgQzxRuJyPCx";
+import { auth } from "../../services/api/firebaseConfig";
 
 const { width, height } = Dimensions.get("window");
 const baseWidth = 414;
@@ -20,7 +19,7 @@ export default function Tabela() {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [users] = useAtom(usersDBAtom)
 
-  const currentUser: User|undefined = users.find((user) => (user.uid === hardcodedAllowedUser)); //! hardcoded
+  const currentUser: User | undefined = users.find((user) => user.uid === (auth.currentUser?.uid || ''));
 
   const userWtihAttendancesBetweenDates = (user: User, fromDate: Date, toDate: Date|undefined): User => {
     if(user.attendance.length === 0)

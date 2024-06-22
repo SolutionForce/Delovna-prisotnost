@@ -35,7 +35,7 @@ export default function Tabela() {
   
     function naredi(date) {
       const utcPlusOneDate = new Date(date).toLocaleString('en-GB', { timeZone: 'Europe/Paris' }); // Paris is in UTC+1
-      console.log("test", utcPlusOneDate);
+      //console.log("test", utcPlusOneDate);
       setSelectedDate(utcPlusOneDate); // Update the state with the new date
     }
   

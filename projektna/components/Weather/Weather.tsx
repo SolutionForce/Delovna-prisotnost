@@ -11,7 +11,7 @@ const Weather = () => {
       try {
         const weatherData = await getCurrentWeather();
         setWeather(weatherData);
-        console.log(weatherData)
+        //console.log(weatherData)
       } catch (error) {
         console.error('Error fetching weather data:', error);
       }
@@ -23,10 +23,10 @@ const Weather = () => {
   const getWeatherIconSource = () => {
     if (weather && weather.current && weather.current.weather[0]) {
       const iconCode = weather.current.weather[0].icon;
-      console.log(iconCode)
+      //console.log(iconCode)
       return `http://openweathermap.org/img/wn/${iconCode}@2x.png`;
     }
-    console.log("default_icon_uri.png")
+    //console.log("default_icon_uri.png")
     return "default_icon_uri.png";
   };
 

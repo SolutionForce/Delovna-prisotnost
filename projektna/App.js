@@ -18,7 +18,7 @@ export default function App() {
     const subscriber = onAuthStateChanged(auth, (user) => {
       setUser(user);
       if (initializing) setInitializing(false);
-      console.log(user, 'user');
+      //console.log(user, 'user');
     });
 
     return () => subscriber();
@@ -26,23 +26,12 @@ export default function App() {
 
   if (initializing) return null;
 
-  if (!user) {
-    return (
-      <TamaguiProvider config={config}>
-        <Theme name="light">
-          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <Login />
-          </View>
-        </Theme>
-      </TamaguiProvider>
-    );
-  }
-
   return (
     <TamaguiProvider config={config}>
       <Inicialization />
       <Theme name="blue">
-        <NavigationContainerComponent uid={user.uid} />
+        {!user && <Login />}
+        {user && <NavigationContainerComponent uid={user.uid} />}
       </Theme>
     </TamaguiProvider>
   );

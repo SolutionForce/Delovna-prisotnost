@@ -1,7 +1,7 @@
 import React from 'react';
-import { Button } from 'react-native';
 import { auth } from '../../services/api/firebaseConfig';
 import { signOut } from 'firebase/auth';
+import { Button } from 'tamagui';
 
 const LogoutButton = () => {
     const handleLogout = async () => {
@@ -14,7 +14,7 @@ const LogoutButton = () => {
     };
 
     return (
-        <Button onPress={handleLogout} title="Logout" />
+        <Button scaleIcon={1.2} marginHorizontal="$2" theme="active" onPress={handleLogout}>Logout</Button>
     );
 };
 

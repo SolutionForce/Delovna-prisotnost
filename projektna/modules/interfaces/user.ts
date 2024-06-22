@@ -1,5 +1,11 @@
 import { Timestamp } from "@firebase/firestore";
 
+export enum Role {
+    admin = "admin",
+    employee = "employee",
+    guest = "guest"
+}
+
 export interface Break {
     start: Timestamp;
     end: Timestamp|null;
@@ -16,5 +22,10 @@ export interface User {
     uid: string;
     name: string;
     surname: string;
+    email: string;
+    createdAt: Timestamp;
+    organizationId: string;
+    role: Role;
     attendance: Attendance[];
+    hourlyRate: number;
 }

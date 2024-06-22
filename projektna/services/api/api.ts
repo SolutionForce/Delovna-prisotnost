@@ -1,5 +1,5 @@
 import { getDocs, collection, addDoc, doc, setDoc } from '@firebase/firestore';
-import { app, firestore } from '../api/firebaseConfig';
+import { app, auth, firestore } from '../api/firebaseConfig';
 import { User } from '../../modules/interfaces/user';
 import axios from "axios";
 
@@ -12,9 +12,11 @@ const api = axios.create({ //to be used soon
    },
 });
 
+export const BACKEND_BASE_URL = "https://us-central1-rvir-1e34e.cloudfunctions.net/api/";
+
 export const getUsers = async (): Promise<User[]> => {
   try {
-   const response = await axios.get('http://localhost:5001/rvir-1e34e/us-central1/api/users');//to be changed
+   const response = await axios.get(BACKEND_BASE_URL + 'users');
     return response.data;
 
   } catch (error) {
@@ -25,9 +27,8 @@ export const getUsers = async (): Promise<User[]> => {
 }
 
 export const getUser = async (uid: String): Promise<User[]> => {
-  console.log("tle")
   try {
-    const response = await axios.get(`http://localhost:5001/rvir-1e34e/us-central1/api/users/${uid}`);//to be changed
+    const response = await axios.get(BACKEND_BASE_URL + `users/${uid}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching data from API:', error);
@@ -39,7 +40,7 @@ export const getUser = async (uid: String): Promise<User[]> => {
 
 export const addUser = async (user: User) => {
   try {
-    axios.post('http://localhost:5001/rvir-1e34e/us-central1/api/users', user);//to be changed
+    axios.post(BACKEND_BASE_URL + 'users', user); //Wrong json input for API endpoint
   } catch (error) {
     console.error('Error adding document: ', error);
   }
@@ -55,5 +56,36 @@ export const getCurrentWeather = async () => {
     return data;
   } catch (error) {
     console.error('Error fetching data from OpenWeatherMap:', error);
+  }
+}
+
+export const verifyTOTPcode = async (codeTOTP: string): Promise<boolean> => {
+  if(!auth.currentUser)
+    throw new Error("User not logged in");
+
+  try {
+    const idToken = await auth.currentUser.getIdToken(/* forceRefresh */ true);
+    
+    const headers = {
+      'auth': idToken,
+      'Content-Type': 'application/json'
+    };
+      
+    const response = await fetch(BACKEND_BASE_URL + "codeAuthentication/verify", {
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify( {tokenTOTP: (codeTOTP+'')} )
+    });
+    if (!response.ok && response.status!==400) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const result = await response.json();
+    if(result.message==="Token is valid")
+      return true;
+    
+    return false;
+  } catch (err) {
+    console.error(err);
+    return false;
   }
 }

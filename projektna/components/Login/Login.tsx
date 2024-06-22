@@ -35,7 +35,8 @@ const Login = () => {
         secureTextEntry
         style={{ marginBottom: 20, width: '100%' }}
       />
-      <Button onPress={handleLogin} width="100%" backgroundColor="blue" color="white">Login</Button>
+      
+      <Button scaleIcon={1.2} marginHorizontal="$2" theme="active" onPress={handleLogin}>Login</Button>
     </View>
   );
 };
