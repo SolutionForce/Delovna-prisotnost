@@ -1,0 +1,35 @@
+name: Mobile App CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  mobile:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '20'
+
+    - name: Install dependencies
+      run: cd projektna && npm install
+
+    #- name: Run tests
+    #  run: cd projektna && npm test
+
+    #- name: Lint code
+    #  run: cd projektna && npm run lint
+
+    #- name: Build project
+    #  run: cd projektna && npm run build
