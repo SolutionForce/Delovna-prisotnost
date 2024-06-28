@@ -16,7 +16,12 @@ export default function UsersInicialization(): JSX.Element {
             uid: doc.data().uid,
             name: doc.data().name,
             surname: doc.data().surname,
-            attendance: doc.data().attendance
+            attendance: doc.data().attendance,
+            email: doc.data().email, 
+            createdAt: doc.data().createdAt, 
+            organizationId: doc.data().organizationId, 
+            role: doc.data().role, 
+            hourlyRate: doc.data().hourlyRate
           }
         });
         setUsers(data);
