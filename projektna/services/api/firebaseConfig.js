@@ -3,23 +3,14 @@ import { getFirestore } from 'firebase/firestore';
 import { initializeAuth, getReactNativePersistence } from 'firebase/auth';
 import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
 const firebaseConfig = {
-
-    apiKey: "AIzaSyBjOKv_555D1UkEVnuS2kmSbNadVZjnvQA",
-  
-    authDomain: "rvir-1e34e.firebaseapp.com",
-  
-    databaseURL: "https://rvir-1e34e-default-rtdb.europe-west1.firebasedatabase.app",
-  
-    projectId: "rvir-1e34e",
-  
-    storageBucket: "rvir-1e34e.appspot.com",
-  
-    messagingSenderId: "557385771713",
-  
-    appId: "1:557385771713:web:ccd83cc0e1e8b84bb90240",
-  
-    measurementId: "G-LMLP8LTYC2"
-  
+    apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY,
+    authDomain: process.env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN,
+    databaseURL: process.env.EXPO_PUBLIC_FIREBASE_DATABASE_URL,
+    projectId: process.env.EXPO_PUBLIC_FIREBASE_PROJECT_ID,
+    storageBucket: process.env.EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: process.env.EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+    appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID,
+    measurementId: process.env.EXPO_PUBLIC_FIREBASE_MEASUREMENT_ID
   };
 
 export const app = initializeApp(firebaseConfig);

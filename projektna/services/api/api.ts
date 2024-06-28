@@ -3,15 +3,6 @@ import { app, auth, firestore } from '../api/firebaseConfig';
 import { User } from '../../modules/interfaces/user';
 import axios from "axios";
 
-const api = axios.create({ //to be used soon
-   baseURL: process.env.REACT_APP_BASE_URL,
-   timeout: 30000,
-   headers: {
-       "Content-Type": "application/json",
-       Accept: "application/json", 
-   },
-});
-
 export const BACKEND_BASE_URL = "https://us-central1-rvir-1e34e.cloudfunctions.net/api/";
 
 export const getUsers = async (): Promise<User[]> => {
@@ -47,8 +38,7 @@ export const addUser = async (user: User) => {
 }
 
 export const getCurrentWeather = async () => {
-  const ApiKey = '6cf6095411302c38cbddb63a6155cd40'
-  const apiCall = `https://api.openweathermap.org/data/3.0/onecall?lat=46.55&lon=15.63&appid=${ApiKey}` 
+  const apiCall = `https://api.openweathermap.org/data/3.0/onecall?lat=46.55&lon=15.63&appid=${process.env.EXPO_PUBLIC_WEATHER_API_KEY}` 
 
   try {
     const response = await fetch(apiCall);
