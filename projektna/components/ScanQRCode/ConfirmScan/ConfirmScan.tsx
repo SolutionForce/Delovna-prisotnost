@@ -29,12 +29,15 @@ const buttonDisabledOpacitiy = 0.4;
 export default function ConfirmScan(props: ConfirmScanProps) {
   const [users] = useAtom(usersDBAtom);
   const [breakDescription, setbreakDescription] = useState<string>("");
-  const [breakDescriptionEmptyError, setbreakDescriptionEmptyError] = useState<boolean>(false);
+  const [breakDescriptionEmptyError, setbreakDescriptionEmptyError] =
+    useState<boolean>(false);
   const [submissionStatusText, setSubmissionStatusText] = useState<string>("");
   const [loadingVerify, setLoadingVerify] = useState<boolean>(true);
   const [loadingToSave, setLoadingToSave] = useState<boolean>(false);
   const [attendanceVerified, setAttendanceVerified] = useState<boolean>(false);
-  const currentUser: User | undefined = users.find((user) => user.uid === (auth.currentUser?.uid || ''));
+  const currentUser: User | undefined = users.find(
+    (user) => user.uid === (auth.currentUser?.uid || "")
+  );
   const timeNow: Timestamp = Timestamp.now();
   const navigator = useNavigation();
 
@@ -54,18 +57,18 @@ export default function ConfirmScan(props: ConfirmScanProps) {
 
   const isSavingStillAllowed = async (): Promise<boolean> => {
     setLoadingToSave(true);
-    const isAllowed = await verifyTOTPcode(props.scannedData)
+    const isAllowed = await verifyTOTPcode(props.scannedData);
 
-    if(isAllowed)
-      return true;
+    if (isAllowed) return true;
 
-    submissionStatus("Error: QR code verification expired. Scan the QR code again.");
+    submissionStatus(
+      "Error: QR code verification expired. Scan the QR code again."
+    );
     return false;
-  }
+  };
 
   const saveStartedWork = async () => {
-    if(!(await isSavingStillAllowed()))
-      return;
+    if (!(await isSavingStillAllowed())) return;
 
     const currentUserDoc = doc(firestore, "users", currentUser.uid);
     const newAttendance: Attendance = {
@@ -87,8 +90,7 @@ export default function ConfirmScan(props: ConfirmScanProps) {
   };
 
   const saveEndedWork = async () => {
-    if(!(await isSavingStillAllowed()))
-      return;
+    if (!(await isSavingStillAllowed())) return;
 
     const currentUserDoc = doc(firestore, "users", currentUser.uid);
     const updatedAttendances = [...currentUser.attendance];
@@ -116,8 +118,7 @@ export default function ConfirmScan(props: ConfirmScanProps) {
 
     setbreakDescriptionEmptyError(false);
 
-    if(!(await isSavingStillAllowed()))
-      return;
+    if (!(await isSavingStillAllowed())) return;
 
     const currentUserDoc = doc(firestore, "users", currentUser.uid);
     const updatedAttendances = [...currentUser.attendance];
@@ -143,8 +144,7 @@ export default function ConfirmScan(props: ConfirmScanProps) {
   };
 
   const saveEndedABreak = async (e: GestureResponderEvent) => {
-    if(!(await isSavingStillAllowed()))
-      return;
+    if (!(await isSavingStillAllowed())) return;
 
     const currentUserDoc = doc(firestore, "users", currentUser.uid);
     const updatedAttendances = [...currentUser.attendance];
@@ -223,12 +223,12 @@ export default function ConfirmScan(props: ConfirmScanProps) {
     try {
       setAttendanceVerified(await verifyTOTPcode(props.scannedData));
     } catch (error) {
-     console.error(error)
-     setAttendanceVerified(false);
+      console.error(error);
+      setAttendanceVerified(false);
     }
-    
+
     setLoadingVerify(false);
-  }
+  };
 
   useEffect(() => {
     verifyAttendanceCode();
@@ -240,28 +240,32 @@ export default function ConfirmScan(props: ConfirmScanProps) {
   const disableEndBreak = !isEndABreakAllowed();
   const date = timeNow.toDate().toLocaleString("sl-SI").split(",");
 
-  if(loadingVerify)
+  if (loadingVerify)
     return (
       <XStack justifyContent="center">
-        <H3><Spinner color="black" /> Verifying</H3>
+        <H3>
+          <Spinner color="black" /> Verifying
+        </H3>
       </XStack>
     );
 
-  if(!attendanceVerified)
+  if (!attendanceVerified)
     return (
       <XStack justifyContent="center">
         <H3 color="red">Scanned QR code not valid</H3>
       </XStack>
     );
 
-  if(loadingToSave)
+  if (loadingToSave)
     return (
       <XStack justifyContent="center">
-        <H3><Spinner color="black" /> Saving</H3>
+        <H3>
+          <Spinner color="black" /> Saving
+        </H3>
       </XStack>
     );
 
-  if(submissionStatusText !== "")
+  if (submissionStatusText !== "")
     return (
       <YStack>
         <XStack justifyContent="center" marginTop="$5">
@@ -270,40 +274,38 @@ export default function ConfirmScan(props: ConfirmScanProps) {
         <Button
           style={styles.gumb}
           theme="active"
-         onPress={() => {navigator.navigate("Home" as never)}}
+          onPress={() => {
+            navigator.navigate("Home" as never);
+          }}
         >
-          <Text>Home</Text>
+          Home
         </Button>
       </YStack>
     );
 
   return (
-    <YStack>
+    <YStack style={styles.container}>
       <View style={styles.predgovor}>
-        <Text style={styles.dobrodosel}>
-          Wellcome back to work {currentUser.name} {currentUser.surname}!!{" "}
-          {"\n"}Its nice to see you. {"\u{1F970}"}
-          {"\n"}
-        </Text>
+        <>
+          <Text style={styles.dobrodosel}>Welcome back to work</Text>
+          <Text style={styles.dobrodosel}>
+            {currentUser.name} {currentUser.surname}!
+          </Text>
+        </>
 
         <Text style={styles.datum}>
           Today is <Text style={styles.boldItalic}>{date[0]}</Text> and you
-          logged in at<Text style={styles.boldItalic}>{date[1]}</Text>.{"\n"}
-          Have a nice working day.
-          {"\u{1F4AA}"}
+          logged in at <Text style={styles.boldItalic}>{date[1]}</Text>. Have a
+          nice working day.
         </Text>
       </View>
 
-      <XStack marginTop="$8" justifyContent="center">
-        <Text fontSize="$7" color="green">
-          {submissionStatusText}
-        </Text>
+      <XStack marginTop={20} justifyContent="center">
+        <Text style={styles.statusText}>{submissionStatusText}</Text>
       </XStack>
 
-      <Text marginVertical="auto" style={styles.naslov}>
-        Work
-      </Text>
-      <XStack marginTop="$5" space="$3" justifyContent="center">
+      <Text style={styles.sectionTitle}>Work</Text>
+      <XStack marginTop={20} space={20} justifyContent="center">
         <Button
           style={styles.gumb}
           theme="active"
@@ -312,7 +314,7 @@ export default function ConfirmScan(props: ConfirmScanProps) {
           disabled={disableStartWork}
           opacity={disableStartWork ? buttonDisabledOpacitiy : undefined}
         >
-          <Text style={styles.gumbTekts}>Started</Text>
+          Started
         </Button>
         <Button
           style={styles.gumb}
@@ -322,16 +324,14 @@ export default function ConfirmScan(props: ConfirmScanProps) {
           disabled={disableEndWork}
           opacity={disableEndWork ? buttonDisabledOpacitiy : undefined}
         >
-          <Text style={styles.gumbTekts}>Ended</Text>
+          Ended
         </Button>
       </XStack>
 
-      <Separator marginVertical="$10" />
+      <Separator style={styles.separator} />
 
-      <Text marginVertical="auto" style={styles.naslov}>
-        Break
-      </Text>
-      <XStack space="$3" justifyContent="center" marginBottom="$3">
+      <Text style={styles.sectionTitle}>Break</Text>
+      <XStack space={20} justifyContent="center" marginBottom={20}>
         <Button
           style={styles.gumb}
           theme="active"
@@ -340,7 +340,7 @@ export default function ConfirmScan(props: ConfirmScanProps) {
           disabled={disableStartBreak}
           opacity={disableStartBreak ? buttonDisabledOpacitiy : undefined}
         >
-          <Text style={styles.gumbTekts}>Started</Text>
+          Started
         </Button>
         <Button
           style={styles.gumb}
@@ -350,7 +350,7 @@ export default function ConfirmScan(props: ConfirmScanProps) {
           disabled={disableEndBreak}
           opacity={disableEndBreak ? buttonDisabledOpacitiy : undefined}
         >
-          <Text style={styles.gumbTekts}>Ended</Text>
+          Ended
         </Button>
       </XStack>
       {breakDescriptionEmptyError && (
@@ -376,34 +376,10 @@ export default function ConfirmScan(props: ConfirmScanProps) {
 }
 
 const styles = StyleSheet.create({
-  gumb: {
-    borderRadius: 50,
-    backgroundColor: Colors.PURPLE,
-  },
-  gumbTekts: {
-    color: Colors.BLACK,
-  },
-  naslov: {
-    alignContent: "center",
-    textAlign: "center",
-    //  backgroundColor: Colors.PURPLE,
-    width: "100%",
-    height: 50,
-    fontSize: 30,
-    color: Colors.BLACK,
-    borderRadius: 20,
-    marginBottom: 10,
-  },
-  dobrodosel: {
-    marginLeft: 10,
-  },
-  datum: {
-    marginLeft: 10,
-    paddingBottom: 10,
-  },
-  boldItalic: {
-    fontWeight: "bold",
-    fontStyle: "italic",
+  container: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: "#FFFFFF",
   },
   predgovor: {
     backgroundColor: Colors.PURPLE,
@@ -411,13 +387,65 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderWidth: 2,
     borderColor: Colors.BLACK,
-    marginTop: 6
+    marginTop: 6,
+    padding: 10,
   },
-  description: {},
+  dobrodosel: {
+    fontSize: 20,
+    color: Colors.BLACK,
+    marginBottom: 10,
+  },
+  datum: {
+    fontSize: 16,
+    color: Colors.BLACK,
+  },
+  boldItalic: {
+    fontWeight: "bold",
+    fontStyle: "italic",
+  },
+  sectionTitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: Colors.BLACK,
+    textAlign: "center",
+    marginVertical: 20,
+  },
+  gumb: {
+    borderRadius: 50,
+    backgroundColor: Colors.PURPLE,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+  },
+  gumbTekts: {
+    color: Colors.BLACK,
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  separator: {
+    height: 1,
+    backgroundColor: Colors.BLACK,
+    marginVertical: 20,
+    width: "80%",
+    alignSelf: "center",
+  },
   breakArea: {
+    borderWidth: 1,
+    borderColor: Colors.BLACK,
+    borderRadius: 10,
+    padding: 10,
+    fontSize: 16,
+    backgroundColor: "#F5F5F5",
+    textAlignVertical: "top",
+    height: 100,
     width: "100%",
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+  },
+  statusText: {
+    fontSize: 18,
+    color: Colors.BLACK,
+  },
+  description: {
+    fontSize: 18,
+    color: "red",
+    textAlign: "center",
   },
 });
