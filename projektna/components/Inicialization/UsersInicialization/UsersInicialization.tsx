@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
 import { onSnapshot, collection } from "firebase/firestore";
 import { useAtom } from "jotai";
-import { usersDBAtom } from "../../../atoms/UsersDBAtom";
 import { User } from "../../../modules/interfaces/user";
 import { firestore } from "../../../services/api/firebaseConfig";
+import { usersDBAtom } from "../../../Atoms/UsersDBAtom";
 
 export default function UsersInicialization(): JSX.Element {
 	const [, setUsers] = useAtom(usersDBAtom);
