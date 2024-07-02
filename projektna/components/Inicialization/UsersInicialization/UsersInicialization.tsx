@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { onSnapshot, collection } from "firebase/firestore";
 import { useAtom } from "jotai";
-import { usersDBAtom } from "../../../Atoms/UsersDBAtom";
+import { usersDBAtom } from "../../../atoms/UsersDBAtom";
 import { User } from "../../../modules/interfaces/user";
 import { firestore } from "../../../services/api/firebaseConfig";
 
