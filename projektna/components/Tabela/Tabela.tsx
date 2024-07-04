@@ -103,6 +103,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     paddingVertical: 20,
+    backgroundColor: "#FFFFFF",
   },
   container: {
     flex: 1,
@@ -152,5 +153,3 @@ const styles = StyleSheet.create({
     marginVertical: 5,
   },
 });
-
-export default Tabela;

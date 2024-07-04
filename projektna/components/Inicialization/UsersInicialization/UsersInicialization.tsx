@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { onSnapshot, collection } from "firebase/firestore";
 import { useAtom } from "jotai";
 import { User } from "../../../modules/interfaces/user";
-import { firestore } from "../../../services/api/firebaseConfig";
+import { auth, firestore } from "../../../services/api/firebaseConfig";
 import { usersDBAtom } from "../../../Atoms/UsersDBAtom";
 
 export default function UsersInicialization(): JSX.Element {
@@ -10,6 +10,9 @@ export default function UsersInicialization(): JSX.Element {
 
 	useEffect(() => {
     {
+      if(!auth.currentUser)
+        return;
+
       const unsubscribe = onSnapshot(collection(firestore, "users"), (snapshot) => { //onSnapshot(kolekcija, result, error) avtomatsko poda podatke vsakic ko se v bazi spremenijo
         const data: User[] = snapshot.docs.map((doc): User => {
           return {
@@ -26,12 +29,12 @@ export default function UsersInicialization(): JSX.Element {
         });
         setUsers(data);
       }, (error) => {
-        console.warn(error)
+        console.log(error)
       });
 
       return () => {unsubscribe()}; //To nujno more bit drugace bodo klici v neskoncnost pri onSnapshot()!
     }
-  }, [setUsers]);
+  }, [setUsers, auth.currentUser]);
 
 
   return (

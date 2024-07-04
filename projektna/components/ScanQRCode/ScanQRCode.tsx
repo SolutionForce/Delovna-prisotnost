@@ -70,7 +70,7 @@ export default function ScanQRCode() {
           </>
         }
         {scanned &&
-          <ScrollView padding="$2" paddingTop="$2" space="$3">
+          <ScrollView padding="$2" paddingTop="$2" space="$3" style={styles.background}>
             <YStack space="$2" justifyContent="center" paddingBottom="$11">
               <XStack space="$2" justifyContent="center" marginTop="$2"><ButtonT  style = {styles.gumb}theme='gray' onPress={() => {setScanned(false)}}>Scan again</ButtonT><Text style={styles.Text}>Successfully scanned</Text></XStack>
               <ConfirmScan scannedData={scannedData} />
@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
     //flex: 1,
     justifyContent: 'center',
     padding: 0,
-    margin: 0
+    margin: 0,
   },
   camera: {
     //flex: 1,
@@ -125,7 +125,8 @@ const styles = StyleSheet.create({
     marginTop: 15,
     fontSize: 10,
     color: Colors.BLACK,
-
-  
+  },
+  background: {
+    backgroundColor: "#FFFFFF",
   }
 });

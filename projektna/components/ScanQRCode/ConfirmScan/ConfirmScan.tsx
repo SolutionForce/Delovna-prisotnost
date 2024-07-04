@@ -364,6 +364,7 @@ export default function ConfirmScan(props: ConfirmScanProps) {
         style={styles.breakArea}
         size="$4"
         borderWidth={2}
+        placeholderTextColor={"grey"}
         placeholder="Enter a description of the break..."
         defaultValue={breakDescription}
         onChangeText={(e) => {
@@ -425,8 +426,10 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: Colors.BLACK,
     marginVertical: 20,
+    marginTop: 50,
     width: "80%",
     alignSelf: "center",
+    borderColor: Colors.PURPLE
   },
   breakArea: {
     borderWidth: 1,
